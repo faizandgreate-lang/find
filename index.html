@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Location Finder - Multi Theme</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
+
+:root {
+  --text-light: #000;
+  --text-dark: #fff;
+  --button-radius: 8px;
+}
+
+/* BODY BASE */
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  transition: all 0.5s ease;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* LOGO */
+.logo {
+  width: 220px;
+  height: auto;
+  margin: 20px 0;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  animation: breathe 2s infinite;
+  transition: filter 0.5s ease;
+}
+
+@keyframes breathe {
+  0%,100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  z-index: 1;
+}
+
+button, select {
+  padding: 12px 20px;
+  margin: 10px;
+  font-size: 16px;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: 2px solid #000;
+}
+
+button:hover, select:hover { transform: translateY(-2px); }
+
+/* OUTPUT & MAP */
+#map, #output {
+  width: 90%;
+  max-width: 800px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  margin-top: 20px;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+#map { height: 350px; }
+#output {
+  padding: 20px;
+  font-weight: 500;
+  text-align: left;
+  overflow-x: auto;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+th, td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #000;
+}
+
+th { background-color: #eee; font-weight: 700; }
+tr:nth-child(even) { background-color: #f9f9f9; }
+tr:hover { background-color: #000; color: #fff; }
+
+.place-link { cursor: pointer; text-decoration: underline; }
+
+/* FOOTER */
+footer {
+  margin-top: 40px;
+  padding: 20px;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  transition: all 0.5s ease;
+}
+
+/* THEMES */
+body.theme1 { background: linear-gradient(135deg,#ff9a9e,#fad0c4); color:#000; }
+body.theme2 { background: linear-gradient(120deg,#a1c4fd,#c2e9fb); color:#000; }
+body.theme3 { background: radial-gradient(circle at center,#fbc2eb,#a6c1ee); color:#000; }
+body.theme4 { background: linear-gradient(45deg,#fddb92,#d1fdff); color:#000; }
+body.theme5 { background: linear-gradient(90deg,#667eea,#764ba2); color:#fff; }
+body.theme6 { background: radial-gradient(circle,#89f7fe,#66a6ff); color:#000; }
+body.theme7 { background: linear-gradient(135deg,#f6d365,#fda085); color:#000; }
+body.theme8 { background: linear-gradient(160deg,#ffecd2,#fcb69f); color:#000; }
+body.theme9 { background: linear-gradient(120deg,#84fab0,#8fd3f4); color:#000; }
+body.theme10 { background: linear-gradient(135deg,#cfd9df,#e2ebf0); color:#000; }
+
+/* ANIMATIONS FOR THEMES */
+body.theme1::before, body.theme2::before, body.theme3::before,
+body.theme4::before, body.theme5::before, body.theme6::before,
+body.theme7::before, body.theme8::before, body.theme9::before,
+body.theme10::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-size: 60px 60px;
+  z-index: -1;
+  animation: moveBG 30s linear infinite;
+  opacity: 0.1;
+}
+
+@keyframes moveBG {
+  0% { transform: rotate(0deg) translate(0,0); }
+  50% { transform: rotate(180deg) translate(50px,50px); }
+  100% { transform: rotate(360deg) translate(0,0); }
+}
+
+/* THEME TOGGLE */
+.theme-selector {
+  padding: 10px 16px;
+  border-radius: var(--button-radius);
+  font-weight: bold;
+  border: 2px solid #000;
+}
+
+/* RESPONSIVE */
+@media(max-width:600px) {
+  .logo { width: 150px; }
+  button, select { padding: 10px 14px; font-size:14px; }
+  #map, #output { width:95%; }
+}
+</style>
+</head>
+<body class="theme1">
+
+<header style="display:flex; justify-content:space-between; align-items:center; width:90%; max-width:800px; margin:10px auto;">
+  <img src="https://i.ibb.co/jPQz0mKf/Screenshot-2025-11-05-at-8-24-36-PM.png" class="logo" alt="Logo">
+  <div>
+    <button class="toggle-mode" onclick="toggleMode()">Dark Mode</button>
+    <select class="theme-selector" onchange="changeTheme(this.value)">
+      <option value="theme1">Theme 1</option>
+      <option value="theme2">Theme 2</option>
+      <option value="theme3">Theme 3</option>
+      <option value="theme4">Theme 4</option>
+      <option value="theme5">Theme 5</option>
+      <option value="theme6">Theme 6</option>
+      <option value="theme7">Theme 7</option>
+      <option value="theme8">Theme 8</option>
+      <option value="theme9">Theme 9</option>
+      <option value="theme10">Theme 10</option>
+    </select>
+  </div>
+</header>
+
+<div class="controls">
+  <button onclick="getZip()">Get My ZIP Code</button>
+  <button onclick="getAddress()">Get My Address</button>
+  <button onclick="listNearby()">List Nearby Places</button>
+</div>
+
+<div id="map">
+  <iframe id="osm-map" width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen
+    src="https://www.openstreetmap.org/export/embed.html?bbox=46.665,24.705,46.685,24.725&layer=mapnik&marker=24.7136,46.6753"></iframe>
+</div>
+
+<div id="output">Results will appear here</div>
+
+<footer>
+  <a href="https://www.linux-aios.com/" target="_blank" style="display:inline-block; margin-bottom:8px; padding:10px 16px; background:#0073e6; color:#fff; border-radius:6px; text-decoration:none; font-weight:bold;">
+    Visit My Blog
+  </a>
+  <br>
+  Follow me on Instagram: <a href="https://www.instagram.com/mohammad_faizan_khan_/" target="_blank">@mohammad_faizan_khan_</a>
+</footer>
+
+<script>
+function toggleMode(){
+  document.body.classList.toggle('dark-mode');
+}
+
+function changeTheme(theme){
+  document.body.className = theme;
+}
+
+function getLocation() {
+  return new Promise((resolve, reject) => {
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(pos => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude}),
+      err => reject("Location access denied or unavailable"));
+    } else reject("Geolocation not supported");
+  });
+}
+
+async function getZip() {
+  try {
+    const loc = await getLocation();
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${loc.lat}&lon=${loc.lon}&format=json`);
+    const data = await res.json();
+    document.getElementById('output').innerText = "ZIP Code: " + (data.address.postcode || "Not found");
+    updateMap(loc.lat, loc.lon);
+  } catch(err) { document.getElementById('output').innerText = err; }
+}
+
+async function getAddress() {
+  try {
+    const loc = await getLocation();
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${loc.lat}&lon=${loc.lon}&format=json`);
+    const data = await res.json();
+    document.getElementById('output').innerText = "Address: " + data.display_name;
+    updateMap(loc.lat, loc.lon);
+  } catch(err) { document.getElementById('output').innerText = err; }
+}
+
+function getDistance(lat1, lon1, lat2, lon2){
+  const R = 6371;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLon = (lon2-lon1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return (R*c).toFixed(2);
+}
+
+async function listNearby() {
+  try {
+    const loc = await getLocation();
+    updateMap(loc.lat, loc.lon);
+    const query = `[out:json];node(around:1000,${loc.lat},${loc.lon})[amenity];out;`;
+    const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    if(data.elements.length > 0){
+      let html = `<table>
+        <tr><th>Place Name</th><th>Type</th><th>Distance (km)</th><th>Walking Time (min)</th></tr>`;
+      data.elements.slice(0,20).forEach((el,i)=>{
+        let name = el.tags["name:en"] || el.tags.name || el.tags.amenity;
+        let type = el.tags.amenity || "Unknown";
+        let distance = getDistance(loc.lat, loc.lon, el.lat, el.lon);
+        let time = Math.ceil(distance / 0.083);
+        let osmLink = `https://www.openstreetmap.org/?mlat=${el.lat}&mlon=${el.lon}#map=18/${el.lat}/${el.lon}`;
+        html += `<tr style="animation-delay:${i*0.05}s">
+          <td><span class="place-link" onclick="window.open('${osmLink}','_blank')">${name}</span></td>
+          <td>${type}</td>
+          <td>${distance}</td>
+          <td>${time}</td>
+        </tr>`;
+      });
+      html += `</table>`;
+      document.getElementById('output').innerHTML = html;
+    } else { document.getElementById('output').innerText = "No nearby places found"; }
+  } catch(err){ document.getElementById('output').innerText = "Failed to fetch nearby places"; }
+}
+
+function updateMap(lat, lon){
+  const mapFrame = document.getElementById('osm-map');
+  mapFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.01},${lat-0.01},${lon+0.01},${lat+0.01}&layer=mapnik&marker=${lat},${lon}`;
+}
+</script>
+</body>
+</html>
