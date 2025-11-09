@@ -3,192 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Location Finder - Multi Theme</title>
+<title>Smart Location Finder</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
 
-:root {
-  --text-light: #000;
-  --text-dark: #fff;
-  --button-radius: 8px;
-}
+  body {
+    font-family: 'Merriweather', serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    transition: all 0.5s ease;
+    color: #000;
+    background: #fff;
+  }
 
-/* BODY BASE */
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 0;
-  color: var(--text-light);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  transition: all 0.5s ease;
-  overflow-x: hidden;
-  position: relative;
-}
+  /* Logo */
+  .logo {
+    width: 180px;
+    height: auto;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    animation: breathe 2s infinite;
+    transition: filter 0.5s ease;
+  }
 
-/* LOGO */
-.logo {
-  width: 220px;
-  height: auto;
-  margin: 20px 0;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-  animation: breathe 2s infinite;
-  transition: filter 0.5s ease;
-}
+  @keyframes breathe {
+    0%,100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
 
-@keyframes breathe {
-  0%,100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.05); opacity: 1; }
-}
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    z-index: 1;
+  }
 
-/* CONTROLS */
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  z-index: 1;
-}
+  .controls button {
+    padding: 10px 20px;
+    margin: 8px 0;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #000;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
 
-button, select {
-  padding: 12px 20px;
-  margin: 10px;
-  font-size: 16px;
-  border-radius: var(--button-radius);
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  border: 2px solid #000;
-}
+  .controls button:hover {
+    background-color: #000;
+    color: #fff;
+    transform: translateY(-2px);
+  }
 
-button:hover, select:hover { transform: translateY(-2px); }
+  /* Map & Output */
+  #map {
+    width: 90%;
+    max-width: 600px;
+    height: 250px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+  }
 
-/* OUTPUT & MAP */
-#map, #output {
-  width: 90%;
-  max-width: 800px;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-  margin-top: 20px;
-  overflow: hidden;
-  transition: all 0.5s ease;
-}
+  #output {
+    width: 90%;
+    max-width: 600px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    transition: all 0.5s ease;
+    overflow-x: auto;
+  }
 
-#map { height: 350px; }
-#output {
-  padding: 20px;
-  font-weight: 500;
-  text-align: left;
-  overflow-x: auto;
-}
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
 
-/* TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.5s forwards;
-}
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #000;
+    text-align: left;
+  }
 
-@keyframes fadeInUp {
-  to { opacity: 1; transform: translateY(0); }
-}
+  th { font-weight: bold; background: #eee; }
+  tr:nth-child(even) { background: #f9f9f9; }
 
-th, td {
-  padding: 12px 10px;
-  border-bottom: 1px solid #000;
-}
+  tr:hover { background: #000; color: #fff; }
 
-th { background-color: #eee; font-weight: 700; }
-tr:nth-child(even) { background-color: #f9f9f9; }
-tr:hover { background-color: #000; color: #fff; }
+  .place-link {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 
-.place-link { cursor: pointer; text-decoration: underline; }
+  /* Footer */
+  footer {
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    font-size: 14px;
+  }
 
-/* FOOTER */
-footer {
-  margin-top: 40px;
-  padding: 20px;
-  width: 100%;
-  text-align: center;
-  font-size: 16px;
-  transition: all 0.5s ease;
-}
+  footer a { text-decoration: none; font-weight: bold; color: #0073e6; }
+  footer a:hover { text-decoration: underline; }
 
-/* THEMES */
-body.theme1 { background: linear-gradient(135deg,#ff9a9e,#fad0c4); color:#000; }
-body.theme2 { background: linear-gradient(120deg,#a1c4fd,#c2e9fb); color:#000; }
-body.theme3 { background: radial-gradient(circle at center,#fbc2eb,#a6c1ee); color:#000; }
-body.theme4 { background: linear-gradient(45deg,#fddb92,#d1fdff); color:#000; }
-body.theme5 { background: linear-gradient(90deg,#667eea,#764ba2); color:#fff; }
-body.theme6 { background: radial-gradient(circle,#89f7fe,#66a6ff); color:#000; }
-body.theme7 { background: linear-gradient(135deg,#f6d365,#fda085); color:#000; }
-body.theme8 { background: linear-gradient(160deg,#ffecd2,#fcb69f); color:#000; }
-body.theme9 { background: linear-gradient(120deg,#84fab0,#8fd3f4); color:#000; }
-body.theme10 { background: linear-gradient(135deg,#cfd9df,#e2ebf0); color:#000; }
+  /* Theme Button */
+  .theme-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #000;
+    background: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
 
-/* ANIMATIONS FOR THEMES */
-body.theme1::before, body.theme2::before, body.theme3::before,
-body.theme4::before, body.theme5::before, body.theme6::before,
-body.theme7::before, body.theme8::before, body.theme9::before,
-body.theme10::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  background-size: 60px 60px;
-  z-index: -1;
-  animation: moveBG 30s linear infinite;
-  opacity: 0.1;
-}
+  /* Background themes */
+  body.theme-1 { background: radial-gradient(circle at top left, #FFDEE9, #B5FFFC); }
+  body.theme-2 { background: linear-gradient(135deg, #F6D365 0%, #FDA085 100%); }
+  body.theme-3 { background: linear-gradient(45deg, #89FFFD, #EF32D9); }
+  body.theme-4 { background: linear-gradient(90deg, #A18CD1 0%, #FBC2EB 100%); }
+  body.theme-5 { background: linear-gradient(135deg, #FFAFBD 0%, #ffc3a0 100%); }
+  body.theme-6 { background: radial-gradient(circle, #f5f7fa, #c3cfe2); }
+  body.theme-7 { background: linear-gradient(120deg, #89f7fe, #66a6ff); }
+  body.theme-8 { background: linear-gradient(45deg, #f093fb, #f5576c); }
+  body.theme-9 { background: linear-gradient(60deg, #5ee7df, #b490ca); }
+  body.theme-10 { background: radial-gradient(circle at center, #fad0c4, #ffd1ff); }
 
-@keyframes moveBG {
-  0% { transform: rotate(0deg) translate(0,0); }
-  50% { transform: rotate(180deg) translate(50px,50px); }
-  100% { transform: rotate(360deg) translate(0,0); }
-}
+  /* Add animation */
+  body.theme-1::before, body.theme-2::before, body.theme-3::before,
+  body.theme-4::before, body.theme-5::before, body.theme-6::before,
+  body.theme-7::before, body.theme-8::before, body.theme-9::before,
+  body.theme-10::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    z-index: -1;
+    background-size: 100px 100px;
+    animation: bgMove 25s linear infinite;
+  }
 
-/* THEME TOGGLE */
-.theme-selector {
-  padding: 10px 16px;
-  border-radius: var(--button-radius);
-  font-weight: bold;
-  border: 2px solid #000;
-}
+  body.theme-1::before { background-image: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px); }
+  body.theme-2::before { background-image: radial-gradient(circle, rgba(0,0,0,0.05) 2px, transparent 2px); }
+  body.theme-3::before { background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.2) 0 5px, transparent 5px 10px); }
+  body.theme-4::before { background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.15) 0 10px, transparent 10px 20px); }
+  body.theme-5::before { background-image: radial-gradient(circle, rgba(255,255,255,0.1) 2px, transparent 2px); }
+  body.theme-6::before { background-image: repeating-linear-gradient(60deg, rgba(255,255,255,0.2) 0 10px, transparent 10px 20px); }
+  body.theme-7::before { background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px); }
+  body.theme-8::before { background-image: repeating-linear-gradient(30deg, rgba(255,255,255,0.2) 0 8px, transparent 8px 16px); }
+  body.theme-9::before { background-image: radial-gradient(circle, rgba(255,255,255,0.1) 2px, transparent 2px); }
+  body.theme-10::before { background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.15) 0 10px, transparent 10px 20px); }
 
-/* RESPONSIVE */
-@media(max-width:600px) {
-  .logo { width: 150px; }
-  button, select { padding: 10px 14px; font-size:14px; }
-  #map, #output { width:95%; }
-}
+  @keyframes bgMove { 0% { transform: translate(0,0); } 50% { transform: translate(-50px,50px); } 100% { transform: translate(0,0); } }
+
 </style>
 </head>
-<body class="theme1">
+<body class="theme-1">
 
-<header style="display:flex; justify-content:space-between; align-items:center; width:90%; max-width:800px; margin:10px auto;">
-  <img src="https://i.ibb.co/jPQz0mKf/Screenshot-2025-11-05-at-8-24-36-PM.png" class="logo" alt="Logo">
-  <div>
-    <button class="toggle-mode" onclick="toggleMode()">Dark Mode</button>
-    <select class="theme-selector" onchange="changeTheme(this.value)">
-      <option value="theme1">Theme 1</option>
-      <option value="theme2">Theme 2</option>
-      <option value="theme3">Theme 3</option>
-      <option value="theme4">Theme 4</option>
-      <option value="theme5">Theme 5</option>
-      <option value="theme6">Theme 6</option>
-      <option value="theme7">Theme 7</option>
-      <option value="theme8">Theme 8</option>
-      <option value="theme9">Theme 9</option>
-      <option value="theme10">Theme 10</option>
-    </select>
-  </div>
-</header>
+<img src="https://i.ibb.co/jPQz0mKf/Screenshot-2025-11-05-at-8-24-36-PM.png" class="logo" alt="Logo">
 
 <div class="controls">
   <button onclick="getZip()">Get My ZIP Code</button>
@@ -204,21 +192,21 @@ body.theme10::before {
 <div id="output">Results will appear here</div>
 
 <footer>
-  <a href="https://www.linux-aios.com/" target="_blank" style="display:inline-block; margin-bottom:8px; padding:10px 16px; background:#0073e6; color:#fff; border-radius:6px; text-decoration:none; font-weight:bold;">
-    Visit My Blog
-  </a>
-  <br>
-  Follow me on Instagram: <a href="https://www.instagram.com/mohammad_faizan_khan_/" target="_blank">@mohammad_faizan_khan_</a>
+  <a href="https://www.linux-aios.com/" target="_blank">Visit My Blog</a> | Follow me on Instagram: <a href="https://www.instagram.com/mohammad_faizan_khan_/" target="_blank">@mohammad_faizan_khan_</a>
 </footer>
 
+<button class="theme-btn" onclick="changeTheme()">Change Theme</button>
+
 <script>
-function toggleMode(){
-  document.body.classList.toggle('dark-mode');
+let currentTheme = 1;
+function changeTheme(){
+  currentTheme++;
+  if(currentTheme > 10) currentTheme = 1;
+  document.body.className = 'theme-' + currentTheme;
 }
 
-function changeTheme(theme){
-  document.body.className = theme;
-}
+/* Location & Map JS (same as your previous code) */
+function toggleMode() { document.body.classList.toggle('dark-mode'); }
 
 function getLocation() {
   return new Promise((resolve, reject) => {
@@ -274,7 +262,7 @@ async function listNearby() {
         let distance = getDistance(loc.lat, loc.lon, el.lat, el.lon);
         let time = Math.ceil(distance / 0.083);
         let osmLink = `https://www.openstreetmap.org/?mlat=${el.lat}&mlon=${el.lon}#map=18/${el.lat}/${el.lon}`;
-        html += `<tr style="animation-delay:${i*0.05}s">
+        html += `<tr>
           <td><span class="place-link" onclick="window.open('${osmLink}','_blank')">${name}</span></td>
           <td>${type}</td>
           <td>${distance}</td>
