@@ -1,830 +1,120 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Smart Location Finder — Canvas Themes + Ambient</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Location Finder — Mobile View</title>
 <style>
-  :root{
-    --card-bg: rgba(255,255,255,0.86);
-    --btn-bg: rgba(255,255,255,0.94);
-    --text-color: #111;
-    --muted: rgba(0,0,0,0.55);
-    --accent: #0b74ff;
-  }
-  html,body{height:100%;margin:0;font-family:"Merriweather",serif;-webkit-font-smoothing:antialiased;}
-  body{
-    display:flex;flex-direction:column;align-items:center;min-height:100vh;
-    color:var(--text-color);background:#fff;overflow-x:hidden;position:relative;transition:background .6s,color .6s;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
 
-  /* main animated background canvas (desktop only) */
-  canvas#bgCanvas{ position:fixed; left:0; top:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+html, body {
+  height: 100%; margin: 0; font-family: "Merriweather", serif; -webkit-font-smoothing: antialiased;
+  display: flex; justify-content: center; align-items: center; background: #111;
+}
 
-  /* small canvas behind logo */
-  #logoWrap{ position:relative; z-index:22; display:flex; align-items:center; gap:12px; }
-  canvas#logoGlow{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:1; pointer-events:none; border-radius:14px; }
-  .logo{ width:150px;border-radius:10px; box-shadow:0 10px 32px rgba(0,0,0,0.16); position:relative; z-index:2; animation:logo-breathe 3200ms ease-in-out infinite; }
-  @keyframes logo-breathe{ 0%,100%{transform:scale(1);opacity:.98} 50%{transform:scale(1.03);opacity:1} }
+.mobile-wrapper {
+  width: 100%; max-width: 420px; height: 90vh; display: flex; flex-direction: column; align-items: center;
+  position: relative; overflow: hidden; background: #fff; border-radius: 16px; box-shadow: 0 0 36px rgba(0,0,0,0.2);
+}
 
-  header{ width:92%; max-width:980px; margin:18px auto 6px; display:flex; align-items:center; justify-content:center; gap:20px; z-index:20; position:relative; }
-  .tiny-dot{ width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.12); transition:transform .18s; z-index:22; }
-  .tiny-dot:active{ transform:scale(.92) }
+canvas.bgcanvas {
+  position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+}
 
-  .controls{ width:92%;max-width:980px;margin:8px auto 6px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;z-index:18; position:relative; }
-  .btn{ padding:10px 18px;border-radius:12px;border:none;background:var(--btn-bg);font-weight:700;color:var(--text-color);box-shadow:0 10px 30px rgba(0,0,0,0.12);cursor:pointer;transition:transform .12s, box-shadow .12s; min-width:170px }
-  .btn:active{ transform:translateY(1px) }
-  .btn.small{min-width:140px;padding:8px 14px}
-  .btn.ghost{ background:transparent; box-shadow:none; border:1px solid rgba(255,255,255,0.06); }
+header {
+  width: 90%; display: flex; justify-content: center; align-items: center; margin: 12px 0 6px; z-index: 20;
+}
 
-  main{ width:92%; max-width:980px; margin:12px auto; z-index:16; position:relative; display:flex; flex-direction:column; gap:12px; align-items:center; }
+.logo { width: 120px; border-radius: 8px; animation: logo-breathe 3s ease-in-out infinite; z-index: 20; }
 
-  #card{ width:100%; border-radius:14px; padding:14px; background:var(--card-bg); backdrop-filter: blur(8px) saturate(110%); box-shadow:0 18px 50px rgba(10,10,20,0.08); color:var(--text-color); }
-  #mapFrameWrap{ width:100%; height:340px; border-radius:12px; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04); }
-  iframe#osm-map{ width:100%; height:100%; border:0; display:block; }
+@keyframes logo-breathe { 0%,100%{transform:scale(1);opacity:.95} 50%{transform:scale(1.04);opacity:1} }
 
-  #output{ width:100%; margin-top:6px; color:var(--text-color); font-size:15px; }
+.controls { width: 90%; display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 18; }
+.btn { padding: 10px 16px; border-radius: 10px; border: none; background: rgba(255,255,255,0.94);
+  font-weight: 700; color: #111; box-shadow: 0 6px 18px rgba(0,0,0,0.12); cursor: pointer; min-width: 140px;
+}
+.btn:active { transform: translateY(1px); }
 
-  table{ width:100%; border-collapse:collapse; font-size:14px }
-  th,td{ padding:8px; border-bottom:1px solid rgba(0,0,0,0.06); text-align:left; vertical-align:top }
-  th{ font-weight:700; background:rgba(255,255,255,0.06) }
+#map { width: 90%; height: 240px; margin: 12px 0; border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,0.12); z-index: 16; overflow: hidden; }
+#output { width: 90%; margin-bottom: 8px; padding: 10px; font-size: 14px; color: #111; z-index: 16; }
 
-  /* footer with aurora canvas behind it */
-  footer{ width:100%; text-align:center; padding:18px 8px 46px; color:var(--text-color); font-size:14px; position:relative; z-index:16; overflow:visible; }
-  canvas#footerAurora{ position:absolute; left:0; right:0; bottom:0; height:140px; width:100%; z-index:0; pointer-events:none; }
-  .footerInner{ position:relative; z-index:2; display:inline-block; background:transparent; padding:8px 12px; border-radius:10px; }
+footer {
+  width: 90%; text-align: center; font-size: 12px; color: #111; margin-bottom: 8px; position: relative; z-index: 16;
+}
+footer a { color: #111; font-weight: 700; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
 
-  footer a{ color:var(--text-color); font-weight:700; text-decoration:none; margin:0 8px; display:inline-block; }
-  footer a::after{ content:""; display:block; height:3px; width:0; background:var(--accent); margin-top:6px; border-radius:2px; opacity:0; transition:width .36s, opacity .36s; }
-  footer a:hover::after{ width:100%; opacity:0.95; }
+.aurora-footer {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; z-index: 0;
+}
 
-  /* controls for theme + sound */
-  .theme-btn{ position:fixed; right:16px; bottom:16px; width:52px; height:52px; border-radius:12px; border:none; cursor:pointer; z-index:40; background:var(--btn-bg); box-shadow:0 14px 40px rgba(0,0,0,0.18); display:flex; align-items:center; justify-content:center; transition:transform .12s, box-shadow .12s;}
-  .theme-btn:active{ transform:scale(.96) }
-  .sound-btn{ position:fixed; right:16px; bottom:82px; width:44px;height:44px;border-radius:10px;border:none;cursor:pointer;z-index:40;background:var(--btn-bg);box-shadow:0 10px 26px rgba(0,0,0,0.15); display:flex;align-items:center;justify-content:center; transition:transform .12s }
-  .sound-btn:active{ transform:scale(.96) }
-
-  /* compact responsive */
-  @media(max-width:720px){
-    #mapFrameWrap{ height:280px }
-    .logo{ width:120px }
-    .theme-btn{ right:12px; bottom:12px; width:46px; height:46px }
-    .sound-btn{ right:12px; bottom:72px; width:40px; height:40px }
-  }
-  @media(max-width:520px){
-    body{ background: linear-gradient(180deg,#fbfdff,#f2f8ff); }
-    #card{ padding:10px }
-    #mapFrameWrap{ height:220px }
-  }
-
-  /* small utilities */
-  .muted{ color:var(--muted); font-size:13px }
-  a.link-btn{ color:var(--text-color); text-decoration:underline; font-weight:700 }
-
+.theme-btn { position: absolute; right: 12px; bottom: 12px; width: 46px; height: 46px; border-radius: 12px; z-index: 40; }
+.sound-btn { position: absolute; right: 12px; bottom: 68px; width: 40px; height: 40px; border-radius: 10px; z-index: 40; }
 </style>
 </head>
 <body>
-  <!-- main background canvas (desktop/large screens) -->
-  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+<div class="mobile-wrapper">
+
+  <canvas id="bgCanvas" class="bgcanvas"></canvas>
 
   <header>
-    <div id="logoWrap" style="width:92%;max-width:980px;display:flex;align-items:center;justify-content:center;">
-      <div id="leftDot" class="tiny-dot" title="Spark" style="background:linear-gradient(180deg,#ffd6e6,#ff9fb0)"></div>
-
-      <!-- logo glow canvas sits behind the img; size is controlled in JS -->
-      <div style="position:relative; display:inline-block;">
-        <canvas id="logoGlow" aria-hidden="true"></canvas>
-        <img class="logo" id="logoImg" src="https://i.ibb.co/jPQz0mKf/Screenshot-2025-11-05-at-8-24-36-PM.png" alt="Logo">
-      </div>
-
-      <div id="rightDot" class="tiny-dot" title="Ripple" style="background:linear-gradient(180deg,#d6f7ff,#6fefff)"></div>
-    </div>
+    <img class="logo" src="https://i.ibb.co/jPQz0mKf/Screenshot-2025-11-05-at-8-24-36-PM.png" alt="Logo">
   </header>
 
-  <div class="controls" role="region" aria-label="Main controls">
-    <button class="btn small" id="btnZip">Get My ZIP Code</button>
-    <button class="btn small" id="btnAddress">Get My Address</button>
-    <button class="btn small" id="btnNearby">List Nearby Places</button>
-    <button class="btn small ghost" id="btnOpenMap" title="Open map (desktop)">Open Map</button>
+  <div class="controls">
+    <button class="btn" onclick="getZip()">Get My ZIP Code</button>
+    <button class="btn" onclick="getAddress()">Get My Address</button>
+    <button class="btn" onclick="listNearby()">List Nearby Places</button>
   </div>
 
-  <main>
-    <div id="card" role="region" aria-live="polite">
-      <div id="mapFrameWrap">
-        <!-- on mobile we keep iframe (lightweight); on desktop iframe is hidden, replaced by an OpenStreetMap link -->
-        <iframe id="osm-map" loading="lazy" allowfullscreen src="https://www.openstreetmap.org/export/embed.html?bbox=46.665,24.705,46.685,24.725&layer=mapnik&marker=24.7136,46.6753"></iframe>
-      </div>
+  <div id="map">
+    <iframe id="osm-map" width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen
+      src="https://www.openstreetmap.org/export/embed.html?bbox=46.665,24.705,46.685,24.725&layer=mapnik&marker=24.7136,46.6753"></iframe>
+  </div>
 
-      <div id="output" class="muted">Results will appear here</div>
-    </div>
-  </main>
+  <div id="output">Results will appear here</div>
 
   <footer>
-    <canvas id="footerAurora" aria-hidden="true"></canvas>
-    <div class="footerInner">
-      <a href="https://www.instagram.com/mohammad_faizan_khan_/" target="_blank" rel="noopener">@mohammad_faizan_khan_</a> |
-      <a href="https://mohammad.faizan.khan.linux-aios.com" target="_blank" rel="noopener">mohammad.faizan.khan.linux-aios.com</a>
-      <div style="margin-top:10px; font-weight:600; max-width:900px;">
-        Thank you for visit — I made this to help peoples to find zipcode locations and near places by walking distance.
-        <br>Myself Mohammad Faizan Khan — hope it will help.
-      </div>
+    <canvas id="auroraFooter" class="aurora-footer"></canvas>
+    <a href="https://www.instagram.com/mohammad_faizan_khan_/" target="_blank">@mohammad_faizan_khan_</a> |
+    <a href="https://mohammad.faizan.khan.linux-aios.com" target="_blank">mohammad.faizan.khan.linux-aios.com</a>
+    <div style="margin-top:6px; font-weight:600;">
+      Thank you for visit — I made this to help peoples to find zipcode locations and near places by walking distance.
+      <br>Myself Mohammad Faizan Khan — hope it will help.
     </div>
   </footer>
 
-  <!-- Theme toggle & sound -->
-  <button id="themeBtn" class="theme-btn" aria-label="Change theme" title="Change theme">
-    <svg id="themeIcon" class="icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
-    </svg>
-  </button>
-
-  <button id="soundBtn" class="sound-btn" aria-label="Toggle sound" title="Toggle ambient sound">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z" fill="currentColor"/><path id="wave" d="M16.5 9.5c.8 1.2.8 2.8 0 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
-  </button>
+</div>
 
 <script>
-/* ============================
-   Config & state
-   ============================ */
-const isMobile = (() => /Mobi|Android|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 720)();
-const themes = [
-  { id: 'minimal', name: 'Elegant Minimal', accent:'#7f5aff', textLight:false, cardBg:'rgba(255,255,255,0.86)', btnBg:'rgba(255,255,255,0.94)' },
-  { id: 'cinematic', name: 'Dynamic Cinematic', accent:'#9bffec', textLight:true, cardBg:'rgba(8,10,18,0.62)', btnBg:'rgba(8,10,18,0.66)' },
-  { id: 'techy', name: 'Modern Techy', accent:'#39d0ff', textLight:true, cardBg:'rgba(6,10,18,0.6)', btnBg:'rgba(10,14,22,0.64)' }
-];
-let themeIndex = 0; // 0..2
-let audioOn = false;
+// Aurora animation for footer (mobile)
+const auroraCanvas = document.getElementById("auroraFooter");
+const ctx = auroraCanvas.getContext("2d");
 
-/* ============================
-   DOM refs
-   ============================ */
-const bgCanvas = document.getElementById('bgCanvas');
-const logoGlowCanvas = document.getElementById('logoGlow');
-const footerAurora = document.getElementById('footerAurora');
-const themeBtn = document.getElementById('themeBtn');
-const themeIcon = document.getElementById('themeIcon');
-const soundBtn = document.getElementById('soundBtn');
-const leftDot = document.getElementById('leftDot');
-const rightDot = document.getElementById('rightDot');
-const logoImg = document.getElementById('logoImg');
-const osmMap = document.getElementById('osm-map');
-const mapWrap = document.getElementById('mapFrameWrap');
-const output = document.getElementById('output');
-const btnZip = document.getElementById('btnZip');
-const btnAddress = document.getElementById('btnAddress');
-const btnNearby = document.getElementById('btnNearby');
-const btnOpenMap = document.getElementById('btnOpenMap');
-
-/* ============================
-   DPR / resize helpers
-   ============================ */
-function sizeCanvasToDisplay(canvas, desiredHeightPx){
-  const DPR = Math.max(1, window.devicePixelRatio || 1);
-  const w = canvas.clientWidth || (canvas.style.width ? parseInt(canvas.style.width) : window.innerWidth);
-  const h = desiredHeightPx || canvas.clientHeight || canvas.clientHeight || Math.floor(window.innerHeight * 0.18);
-  canvas.width = Math.floor(w * DPR);
-  canvas.height = Math.floor(h * DPR);
-  canvas.style.width = (w) + 'px';
-  canvas.style.height = (h) + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.setTransform(DPR,0,0,DPR,0,0);
-  return ctx;
+function resizeAurora() {
+  auroraCanvas.width = auroraCanvas.offsetWidth;
+  auroraCanvas.height = auroraCanvas.offsetHeight;
 }
+window.addEventListener("resize", resizeAurora);
+resizeAurora();
 
-/* ============================
-   Theme application (UI)
-   ============================ */
-function applyTheme(i, {skipCanvas=false} = {}){
-  const t = themes[i];
-  document.documentElement.style.setProperty('--accent', t.accent);
-  document.documentElement.style.setProperty('--card-bg', t.cardBg);
-  document.documentElement.style.setProperty('--btn-bg', t.btnBg);
-  document.documentElement.style.setProperty('--text-color', t.textLight ? '#f5f7fb' : '#111');
-  // icon color
-  themeIcon.style.color = t.accent;
-  themeBtn.title = t.name;
-  // update tiny dots contrast
-  leftDot.style.background = t.textLight ? 'linear-gradient(180deg,#ffe6b3,#ffb48a)' : 'linear-gradient(180deg,#fff,#ddd)';
-  rightDot.style.background = t.textLight ? 'linear-gradient(180deg,#bfefff,#6fefff)' : 'linear-gradient(180deg,#fff,#ddd)';
-  // adjust footer link underline color (via accent variable)
-  // start canvas theme if needed
-  currentTheme = t.id;
-  if(!skipCanvas) {
-    restartBgAnimation();
-    restartLogoGlow();
-    restartFooterAurora();
-    if(audioOn) startAmbientForTheme(i);
-  }
+let hue = 180;
+function drawAurora() {
+  ctx.clearRect(0, 0, auroraCanvas.width, auroraCanvas.height);
+  const gradient = ctx.createLinearGradient(0, 0, auroraCanvas.width, auroraCanvas.height);
+  gradient.addColorStop(0, `hsla(${hue}, 80%, 50%, 0.3)`);
+  gradient.addColorStop(0.5, `hsla(${hue+50}, 80%, 50%, 0.3)`);
+  gradient.addColorStop(1, `hsla(${hue+100}, 80%, 50%, 0.3)`);
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, auroraCanvas.width, auroraCanvas.height);
+
+  hue += 0.5;
+  requestAnimationFrame(drawAurora);
 }
-
-/* ============================
-   Background Canvas Animations
-   - a single combined lightweight animation with 3 modes
-   ============================ */
-let bgCtx, bgW, bgH, bgDPR;
-let bgRAF = null;
-let bgLast = 0;
-let currentTheme = themes[themeIndex].id;
-
-function setupBgCanvas(){
-  if(isMobile){
-    // minimize heavy canvas on mobile: hide or keep static gradient
-    bgCanvas.style.display = 'none';
-    return;
-  } else {
-    bgCanvas.style.display = 'block';
-  }
-  bgDPR = Math.max(1, window.devicePixelRatio || 1);
-  bgW = innerWidth; bgH = innerHeight;
-  bgCanvas.width = Math.floor(bgW * bgDPR); bgCanvas.height = Math.floor(bgH * bgDPR);
-  bgCanvas.style.width = bgW + 'px'; bgCanvas.style.height = bgH + 'px';
-  bgCtx = bgCanvas.getContext('2d');
-  bgCtx.setTransform(bgDPR,0,0,bgDPR,0,0);
-}
-function clearBg(){ if(bgCtx) bgCtx.clearRect(0,0,bgW,bgH); }
-
-let bgState = {
-  minimal: { orbs: [] },
-  cinematic: { stars: [], nebula: [] },
-  techy: { lines: [] }
-};
-
-function setupMinimal(){
-  const s = bgState.minimal;
-  s.orbs = [];
-  const count = Math.max(6, Math.floor(bgW/140));
-  for(let i=0;i<count;i++){
-    s.orbs.push({ x: Math.random()*bgW, y: Math.random()*bgH*0.6, r: 60+Math.random()*120, vx: (Math.random()-0.5)*0.02, a: Math.random()*Math.PI*2, speed: 0.0006+Math.random()*0.0018 });
-  }
-}
-
-function drawMinimal(dt){
-  // soft gradient
-  const g = bgCtx.createLinearGradient(0,0,0,bgH);
-  g.addColorStop(0,'#f6fbff'); g.addColorStop(1,'#eef7ff');
-  bgCtx.fillStyle = g; bgCtx.fillRect(0,0,bgW,bgH);
-  // gentle orbs
-  bgState.minimal.orbs.forEach(o=>{
-    o.a += o.speed * dt;
-    o.x += o.vx * dt * 0.06;
-    if(o.x > bgW+o.r) o.x = -o.r;
-    bgCtx.globalAlpha = 0.08;
-    const g2 = bgCtx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);
-    g2.addColorStop(0,'rgba(255,255,255,0.85)'); g2.addColorStop(1,'rgba(255,255,255,0)');
-    bgCtx.fillStyle = g2; bgCtx.beginPath(); bgCtx.arc(o.x,o.y,o.r,0,Math.PI*2); bgCtx.fill();
-  });
-  bgCtx.globalAlpha = 1;
-}
-
-function setupCinematic(){
-  const s = bgState.cinematic;
-  s.stars = []; s.nebula = [];
-  for(let i=0;i<160;i++) s.stars.push({x:Math.random()*bgW,y:Math.random()*bgH,r:Math.random()*1.6, vx:(Math.random()-0.5)*0.02, vy:(Math.random()-0.5)*0.02, alpha:0.2+Math.random()*0.9});
-  // nebula smokes (larger smooth gradients)
-  for(let i=0;i<3;i++) s.nebula.push({x:Math.random()*bgW,y:Math.random()*bgH*0.6, r:200+Math.random()*380, hue:200+Math.random()*80, offset:Math.random()*Math.PI*2, speed:0.0004+Math.random()*0.001});
-}
-
-function drawCinematic(dt){
-  // dark starfield gradient
-  const g = bgCtx.createLinearGradient(0,0,0,bgH);
-  g.addColorStop(0,'#02021a'); g.addColorStop(1,'#07102a');
-  bgCtx.fillStyle = g; bgCtx.fillRect(0,0,bgW,bgH);
-  // nebula
-  bgState.cinematic.nebula.forEach(n=>{
-    n.offset += n.speed * dt;
-    bgCtx.globalAlpha = 0.18;
-    const grd = bgCtx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
-    grd.addColorStop(0, `hsla(${n.hue},80%,60%,0.85)`);
-    grd.addColorStop(0.45, `hsla(${n.hue-40},70%,50%,0.3)`);
-    grd.addColorStop(1, 'rgba(0,0,0,0)');
-    bgCtx.fillStyle = grd;
-    bgCtx.beginPath(); bgCtx.ellipse(n.x + Math.sin(n.offset)*80, n.y + Math.cos(n.offset)*60, n.r, n.r*0.6, 0, 0, Math.PI*2); bgCtx.fill();
-  });
-  bgCtx.globalAlpha = 1;
-  // stars
-  bgState.cinematic.stars.forEach(s=>{
-    s.x += s.vx * dt * 0.04; s.y += s.vy * dt * 0.04;
-    if(s.x < 0) s.x = bgW;
-    if(s.x > bgW) s.x = 0;
-    if(s.y < 0) s.y = bgH;
-    if(s.y > bgH) s.y = 0;
-    bgCtx.globalAlpha = s.alpha * 0.9;
-    bgCtx.fillStyle = '#fff'; bgCtx.beginPath(); bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2); bgCtx.fill();
-  });
-  bgCtx.globalAlpha = 1;
-}
-
-function setupTechy(){
-  const s = bgState.techy;
-  s.lines = [];
-  const count = Math.max(6, Math.floor(bgW/160));
-  for(let i=0;i<count;i++) s.lines.push({off:Math.random()*Math.PI*2, amp:40+Math.random()*140, speed:0.0006+Math.random()*0.002, y:Math.random()*bgH*0.8});
-}
-
-function drawTechy(dt){
-  const g = bgCtx.createLinearGradient(0,0,bgW,bgH);
-  g.addColorStop(0,'#071227'); g.addColorStop(1,'#001621');
-  bgCtx.fillStyle = g; bgCtx.fillRect(0,0,bgW,bgH);
-  bgCtx.globalAlpha = 0.95;
-  bgState.techy.lines.forEach((l,i)=>{
-    l.off += l.speed * dt;
-    bgCtx.beginPath();
-    for(let x=0;x<=bgW;x+=10){
-      const y = l.y + Math.sin((x*0.012)+l.off) * l.amp * 0.6;
-      if(x===0) bgCtx.moveTo(x,y); else bgCtx.lineTo(x,y);
-    }
-    bgCtx.strokeStyle = `rgba(100,200,255,${0.06 + i*0.02})`; bgCtx.lineWidth = 2; bgCtx.stroke();
-  });
-  bgCtx.globalAlpha = 1;
-}
-
-/* main set / restart functions */
-function restartBgAnimation(){
-  cancelAnimationFrame(bgRAF);
-  setupBgCanvas();
-  // setup per theme
-  switch(currentTheme){
-    case 'minimal': setupMinimal(); break;
-    case 'cinematic': setupCinematic(); break;
-    case 'techy': setupTechy(); break;
-  }
-  bgLast = performance.now();
-  function loop(now){
-    const dt = now - bgLast; bgLast = now;
-    if(!bgCtx) return;
-    clearBg();
-    if(currentTheme === 'minimal') drawMinimal(dt);
-    else if(currentTheme === 'cinematic') drawCinematic(dt);
-    else drawTechy(dt);
-    bgRAF = requestAnimationFrame(loop);
-  }
-  if(!isMobile) bgRAF = requestAnimationFrame(loop);
-}
-
-/* ============================
-   Logo glow (canvas behind logo)
-   ============================ */
-let logoCtx, logoRAF = null;
-function setupLogoGlow(){
-  // size canvas to match logo image bounding box
-  const rect = logoImg.getBoundingClientRect();
-  const pad = 40;
-  logoGlowCanvas.style.width = (rect.width + pad*2) + 'px';
-  logoGlowCanvas.style.height = (rect.height + pad*2) + 'px';
-  logoGlowCanvas.style.left = (rect.left - pad + window.scrollX) + 'px';
-  logoGlowCanvas.style.top = (rect.top - pad + window.scrollY) + 'px';
-  logoGlowCanvas.width = Math.floor((rect.width + pad*2) * (window.devicePixelRatio||1));
-  logoGlowCanvas.height = Math.floor((rect.height + pad*2) * (window.devicePixelRatio||1));
-  logoCtx = logoGlowCanvas.getContext('2d');
-  logoCtx.setTransform(window.devicePixelRatio||1,0,0,window.devicePixelRatio||1,0,0);
-}
-let logoState = { t:0, pulses:[] };
-function startLogoGlow(){
-  cancelAnimationFrame(logoRAF);
-  if(isMobile){ logoGlowCanvas.style.display = 'none'; return; } else { logoGlowCanvas.style.display = 'block'; }
-  setupLogoGlow();
-  logoState.t = 0;
-  logoState.pulses = [];
-  function draw(now){
-    logoState.t += 16;
-    // clear
-    logoCtx.clearRect(0,0,logoGlowCanvas.width,logoGlowCanvas.height);
-    // background subtle
-    const w = logoGlowCanvas.width/(window.devicePixelRatio||1);
-    const h = logoGlowCanvas.height/(window.devicePixelRatio||1);
-    // center
-    const cx = w/2, cy = h/2;
-    // theme-based color
-    const t = themes[themeIndex];
-    // base soft halo
-    const base = logoCtx.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h)*0.6);
-    base.addColorStop(0, hexToRgba(t.accent, 0.22));
-    base.addColorStop(0.5, hexToRgba(t.accent, 0.08));
-    base.addColorStop(1, 'rgba(0,0,0,0)');
-    logoCtx.fillStyle = base; logoCtx.fillRect(0,0,w,h);
-    // drifting small glow blobs
-    for(let i=0;i<3;i++){
-      const ox = Math.sin((logoState.t*0.0006) + i) * 18;
-      const oy = Math.cos((logoState.t*0.0009) + i*1.7) * 12;
-      const grd = logoCtx.createRadialGradient(cx+ox, cy+oy, 0, cx+ox, cy+oy, 120 + i*40);
-      grd.addColorStop(0, hexToRgba(t.accent, 0.16));
-      grd.addColorStop(1, 'rgba(0,0,0,0)');
-      logoCtx.globalAlpha = 0.9;
-      logoCtx.fillStyle = grd; logoCtx.beginPath(); logoCtx.ellipse(cx+ox, cy+oy, 160 + i*30, 80 + i*12, 0, 0, Math.PI*2); logoCtx.fill();
-    }
-    // pulses (from dot clicks) draw expanding ring
-    for(let i=logoState.pulses.length-1;i>=0;i--){
-      const p = logoState.pulses[i];
-      p.r += 2.6;
-      p.a -= 0.012;
-      logoCtx.strokeStyle = hexToRgba(t.accent, p.a*0.7);
-      logoCtx.lineWidth = 6 * (1 - p.a);
-      logoCtx.beginPath(); logoCtx.arc(cx + p.dx, cy + p.dy, p.r, 0, Math.PI*2); logoCtx.stroke();
-      if(p.a <= 0) logoState.pulses.splice(i,1);
-    }
-    logoCtx.globalAlpha = 1;
-    logoRAF = requestAnimationFrame(draw);
-  }
-  logoRAF = requestAnimationFrame(draw);
-}
-function restartLogoGlow(){ cancelAnimationFrame(logoRAF); setupLogoGlow(); startLogoGlow(); }
-
-/* spawn pulse when dots clicked */
-function spawnLogoPulse(dx=0, dy=0){
-  logoState.pulses.push({r:10, a:0.7, dx, dy});
-}
-
-/* ============================
-   Footer aurora canvas
-   - animated but paused when not visible
-   ============================ */
-let footerCtx, footerW, footerH, footerDPR, footerRAF = null;
-let footerVisible = true; // tracked by observer
-
-function setupFooterCanvas(){
-  footerDPR = Math.max(1, window.devicePixelRatio || 1);
-  footerW = footerAurora.clientWidth || document.documentElement.clientWidth;
-  footerH = footerAurora.clientHeight || 140;
-  footerAurora.width = Math.floor(footerW * footerDPR);
-  footerAurora.height = Math.floor(footerH * footerDPR);
-  footerAurora.style.height = footerH + 'px';
-  footerCtx = footerAurora.getContext('2d');
-  footerCtx.setTransform(footerDPR,0,0,footerDPR,0,0);
-}
-let footerState = { t:0, bands: [] };
-
-function setupFooterAurora(){
-  setupFooterCanvas();
-  footerState.t = 0; footerState.bands = [];
-  const bandCount = 3;
-  for(let i=0;i<bandCount;i++){
-    footerState.bands.push({ offset: Math.random()*Math.PI*2, speed: 0.0004 + Math.random()*0.0014, amp: 12 + Math.random()*50, hue: 180 + (i*40) });
-  }
-}
-function drawFooterAurora(dt){
-  if(!footerCtx) return;
-  footerState.t += dt;
-  footerCtx.clearRect(0,0,footerW,footerH);
-  const t = themes[themeIndex];
-  // background faint gradient
-  const g = footerCtx.createLinearGradient(0,0,0,footerH);
-  if(t.id === 'minimal'){
-    g.addColorStop(0, hexToRgba(t.accent, 0.06)); g.addColorStop(1, 'rgba(255,255,255,0)');
-  } else if(t.id === 'cinematic'){
-    g.addColorStop(0, '#02021a'); g.addColorStop(1, 'rgba(4,8,20,0)');
-  } else {
-    g.addColorStop(0, '#03121b'); g.addColorStop(1, 'rgba(0,0,0,0)');
-  }
-  footerCtx.fillStyle = g; footerCtx.fillRect(0,0,footerW,footerH);
-  // bands
-  footerState.bands.forEach((b, idx) => {
-    b.offset += b.speed * dt;
-    footerCtx.globalAlpha = (t.id === 'cinematic') ? 0.18 : (t.id === 'minimal' ? 0.12 : 0.16);
-    const grd = footerCtx.createLinearGradient(0,0,footerW,0);
-    const hue = (t.id === 'cinematic') ? 210 + idx*20 : (t.id === 'techy' ? 185 + idx*12 : 250 - idx*30);
-    grd.addColorStop(0, `hsla(${hue},80%,60%,0.9)`);
-    grd.addColorStop(0.5, hexToRgba(t.accent, 0.12));
-    grd.addColorStop(1, 'rgba(0,0,0,0)');
-    footerCtx.fillStyle = grd;
-    footerCtx.beginPath();
-    footerCtx.moveTo(-50, footerH);
-    for(let x=0;x<=footerW+80;x+=30){
-      const y = footerH - (Math.sin((x*0.01)+b.offset) * (b.amp + idx*6));
-      footerCtx.lineTo(x, y);
-    }
-    footerCtx.lineTo(footerW+80, footerH);
-    footerCtx.closePath();
-    footerCtx.fill();
-  });
-  footerCtx.globalAlpha = 1;
-}
-
-/* IntersectionObserver to pause footer when not visible (performance) */
-const footerObserver = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    footerVisible = e.isIntersecting;
-    if(footerVisible) restartFooterAurora();
-    else cancelAnimationFrame(footerRAF);
-  });
-},{threshold: 0.05});
-footerObserver.observe(document.querySelector('footer'));
-
-/* restart footer animation */
-function restartFooterAurora(){
-  cancelAnimationFrame(footerRAF);
-  setupFooterAurora();
-  let last = performance.now();
-  function loop(now){
-    const dt = now - last; last = now;
-    if(!footerVisible) return;
-    drawFooterAurora(dt);
-    footerRAF = requestAnimationFrame(loop);
-  }
-  footerRAF = requestAnimationFrame(loop);
-}
-
-/* ============================
-   Utility: color helpers
-   ============================ */
-function hexToRgba(hex, alpha=1){
-  // hex like #aabbcc
-  const h = hex.replace('#','');
-  const r = parseInt(h.substring(0,2),16);
-  const g = parseInt(h.substring(2,4),16);
-  const b = parseInt(h.substring(4,6),16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
-/* ============================
-   Audio: lightweight ambient generator
-   ============================ */
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null, masterGain = null, ambientNodes = [];
-function ensureAudio(){
-  if(!audioCtx){
-    try{
-      audioCtx = new AudioCtx();
-      masterGain = audioCtx.createGain();
-      masterGain.gain.value = 0;
-      masterGain.connect(audioCtx.destination);
-    }catch(e){ audioCtx = null; }
-  }
-}
-function startAmbientForTheme(i){
-  if(!AudioCtx) return;
-  stopAmbient();
-  ensureAudio();
-  if(!audioCtx) return;
-  const t = themes[i];
-  // white noise base
-  const bufferSize = 2 * audioCtx.sampleRate;
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  for(let i2=0;i2<bufferSize;i2++) output[i2] = Math.random()*2 - 1;
-  const noise = audioCtx.createBufferSource(); noise.buffer = noiseBuffer; noise.loop = true;
-  const noiseFilter = audioCtx.createBiquadFilter(); noiseFilter.type = 'bandpass';
-  noiseFilter.frequency.value = (t.id === 'minimal' ? 500 : (t.id === 'cinematic' ? 240 : 420));
-  noiseFilter.Q.value = 0.8;
-  const noiseGain = audioCtx.createGain(); noiseGain.gain.value = 0.025;
-  noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(masterGain);
-  noise.start();
-
-  const osc = audioCtx.createOscillator(); osc.type = 'sine';
-  osc.frequency.value = (t.id === 'minimal' ? 220 : (t.id === 'cinematic' ? 110 : 300));
-  const oscGain = audioCtx.createGain(); oscGain.gain.value = 0.01;
-  osc.connect(oscGain); oscGain.connect(masterGain); osc.start();
-
-  ambientNodes = [noise, noiseFilter, noiseGain, osc, oscGain];
-
-  masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-  masterGain.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + 1.2);
-}
-function stopAmbient(){
-  if(!audioCtx) return;
-  try{
-    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-    masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
-    setTimeout(()=>{ ambientNodes.forEach(n => { try{ n.stop && n.stop(); n.disconnect && n.disconnect(); }catch(e){} }); ambientNodes = []; }, 700);
-  }catch(e){}
-}
-
-/* sound toggling */
-soundBtn.addEventListener('click', async ()=>{
-  if(!audioCtx) ensureAudio();
-  if(!audioOn){
-    try{ await audioCtx.resume(); }catch(e){}
-    startAmbientForTheme(themeIndex);
-    audioOn = true; soundBtn.style.boxShadow = `0 10px 30px ${themes[themeIndex].accent}`;
-  } else {
-    stopAmbient();
-    audioOn = false; soundBtn.style.boxShadow = '';
-  }
-});
-
-/* ============================
-   UI events & interactions
-   ============================ */
-function cycleTheme(){
-  themeIndex = (themeIndex + 1) % themes.length;
-  applyTheme(themeIndex);
-}
-themeBtn.addEventListener('click', () => {
-  cycleTheme();
-  themeBtn.animate([{transform:'scale(1)'},{transform:'scale(.94)'},{transform:'scale(1)'}], {duration:280});
-});
-
-leftDot.addEventListener('click', (e) => {
-  // spawn logo pulse
-  spawnLogoPulse(Math.random()*8-4, Math.random()*8-4);
-  // small spark visual near logo (light)
-});
-rightDot.addEventListener('click', (e) => {
-  spawnLogoPulse(Math.random()*12-6, Math.random()*10-4);
-});
-
-/* ============================
-   Map & Geo functions
-   ============================ */
-function getLocation(){
-  return new Promise((resolve, reject) => {
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(pos => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude}), err => reject(err));
-    } else reject(new Error('Geolocation not supported'));
-  });
-}
-
-async function getZip(){
-  try{
-    output.innerText = 'Finding location…';
-    const loc = await getLocation();
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${loc.lat}&lon=${loc.lon}&format=json`);
-    const data = await res.json();
-    const zip = data.address && data.address.postcode ? data.address.postcode : 'Not found';
-    output.innerHTML = `<strong>ZIP Code:</strong> ${escapeHtml(zip)}`;
-    updateMap(loc.lat, loc.lon);
-  }catch(err){
-    output.innerText = 'Could not get ZIP — ' + (err.message || err);
-  }
-}
-async function getAddress(){
-  try{
-    output.innerText = 'Finding address…';
-    const loc = await getLocation();
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${loc.lat}&lon=${loc.lon}&format=json`);
-    const data = await res.json();
-    const addr = data.display_name || 'Not found';
-    output.innerHTML = `<strong>Address:</strong> ${escapeHtml(addr)}`;
-    updateMap(loc.lat, loc.lon);
-  }catch(err){
-    output.innerText = 'Could not get address — ' + (err.message || err);
-  }
-}
-
-function getDistance(lat1, lon1, lat2, lon2){
-  const R = 6371;
-  const dLat = (lat2-lat1)*Math.PI/180;
-  const dLon = (lon2-lon1)*Math.PI/180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return (R*c);
-}
-
-async function listNearby(){
-  try{
-    output.innerText = 'Looking for nearby places…';
-    const loc = await getLocation();
-    updateMap(loc.lat, loc.lon);
-    // Overpass: amenities within 1000m
-    const query = `[out:json];(node(around:1000,${loc.lat},${loc.lon})[amenity];way(around:1000,${loc.lat},${loc.lon})[amenity];);out center 20;`;
-    const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-    const data = await res.json();
-    if(!data.elements || data.elements.length === 0){
-      output.innerText = 'No nearby places found.';
-      return;
-    }
-    let html = `<table><tr><th>Place</th><th>Type</th><th>Dist (m)</th><th>Walk (min)</th></tr>`;
-    data.elements.slice(0,20).forEach(el=>{
-      const lat = el.lat || (el.center && el.center.lat);
-      const lon = el.lon || (el.center && el.center.lon);
-      const name = (el.tags && (el.tags['name:en'] || el.tags.name)) || (el.tags ? el.tags.amenity : 'Place');
-      const type = (el.tags && el.tags.amenity) || 'Unknown';
-      const dist = Math.round(getDistance(loc.lat, loc.lon, lat, lon)*1000);
-      const walk = Math.max(1, Math.ceil(dist/80)); // ~80 m/min walking (slow)
-      const link = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`;
-      html += `<tr><td style="word-break:break-word"><a href="${link}" target="_blank" rel="noopener">${escapeHtml(name)}</a></td><td>${escapeHtml(type)}</td><td>${dist}</td><td>${walk}</td></tr>`;
-    });
-    html += `</table>`;
-    output.innerHTML = html;
-  }catch(err){
-    output.innerText = 'Failed to fetch nearby places — ' + (err.message || err);
-  }
-}
-
-/* update map - on mobile update iframe, on desktop open link (lighter) */
-function updateMap(lat, lon){
-  const bbox = `${lon-0.01},${lat-0.01},${lon+0.01},${lat+0.01}`;
-  const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
-  if(isMobile){
-    osmMap.src = embed;
-  } else {
-    // show link and an option to open
-    btnOpenMap.onclick = () => {
-      const url = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=16/${lat}/${lon}`;
-      window.open(url, '_blank', 'noopener');
-    };
-    // visually update iframe src for convenience on responsive small desktops
-    osmMap.src = embed;
-  }
-}
-
-/* escape helper */
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-/* wire buttons */
-btnZip.addEventListener('click', getZip);
-btnAddress.addEventListener('click', getAddress);
-btnNearby.addEventListener('click', listNearby);
-
-/* Open map button for desktop - default opens center to Riyadh coordinates on load */
-btnOpenMap.addEventListener('click', ()=>{
-  const lat = 24.7136, lon = 46.6753;
-  const url = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=12/${lat}/${lon}`;
-  window.open(url, '_blank', 'noopener');
-});
-
-/* ============================
-   Initialization & lifecycle
-   ============================ */
-function init(){
-  // initial UI
-  applyTheme(themeIndex, {skipCanvas:true});
-  // prepare canvases & animations
-  if(!isMobile) setupBgCanvas();
-  restartBgAnimation();
-  restartLogoGlow();
-  restartFooterAurora();
-
-  // set mobile iframe visibility
-  if(isMobile){
-    // ensure iframe visible; reduce heavy animations
-    bgCanvas.style.display = 'none';
-    logoGlowCanvas.style.display = 'none';
-  }
-
-  // basic accessibility: announce current theme on load
-  output.innerText = `Theme: ${themes[themeIndex].name}. Use buttons to get ZIP, address or nearby places.`;
-
-  // start audio only after user gesture (respect autoplay)
-  document.addEventListener('click', function onFirstClick(){
-    ensureAudio();
-    document.removeEventListener('click', onFirstClick);
-  }, { once:true });
-
-  // watch window resize to reposition logo glow canvas
-  window.addEventListener('resize', () => {
-    if(!isMobile) { setupBgCanvas(); restartBgAnimation(); }
-    setupLogoGlow();
-    setupFooterCanvas();
-  });
-}
-init();
-
-/* Start with current theme applied */
-applyTheme(themeIndex);
-
-/* Helper restarts */
-function restartBgAnimation(){ currentTheme = themes[themeIndex].id; restartBgAnimationInner(); }
-function restartBgAnimationInner(){
-  cancelAnimationFrame(bgRAF);
-  setupBgCanvas();
-  switch(currentTheme){
-    case 'minimal': setupMinimal(); break;
-    case 'cinematic': setupCinematic(); break;
-    case 'techy': setupTechy(); break;
-  }
-  bgLast = performance.now();
-  function loop(now){
-    const dt = now - bgLast; bgLast = now;
-    if(!bgCtx) return;
-    clearBg();
-    if(currentTheme === 'minimal') drawMinimal(dt);
-    else if(currentTheme === 'cinematic') drawCinematic(dt);
-    else drawTechy(dt);
-    bgRAF = requestAnimationFrame(loop);
-  }
-  if(!isMobile) bgRAF = requestAnimationFrame(loop);
-}
-
-/* rename wrappers because of function hoisting above */
-function restartLogoGlow(){ cancelAnimationFrame(logoRAF); setupLogoGlow(); startLogoGlow(); }
-function restartFooterAurora(){ cancelAnimationFrame(footerRAF); restartFooterAuroraInner(); }
-function restartFooterAuroraInner(){
-  cancelAnimationFrame(footerRAF);
-  setupFooterAurora();
-  let last = performance.now();
-  function loop(now){
-    const dt = now - last; last = now;
-    if(!footerVisible) return;
-    drawFooterAurora(dt);
-    footerRAF = requestAnimationFrame(loop);
-  }
-  footerRAF = requestAnimationFrame(loop);
-}
-
-/* small fix: avoid duplicate function names due to hoisting - ensure functions wired */
-restartBgAnimation = restartBgAnimationInner;
-restartFooterAurora = restartFooterAuroraInner;
-
-/* ============================
-   Final touches
-   ============================ */
-/* expose spawn from clicks to create tiny bursts (lightweight) */
-leftDot.addEventListener('click', ()=> spawnLogoPulse(-6, -3) );
-rightDot.addEventListener('click', ()=> spawnLogoPulse(6, 3) );
-
+drawAurora();
 </script>
+
 </body>
 </html>
